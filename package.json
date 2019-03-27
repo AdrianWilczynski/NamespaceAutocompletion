@@ -1,0 +1,42 @@
+{
+	"name": "namespace",
+	"displayName": "C# Namespace Autocompletion",
+	"description": "...",
+	"publisher": "adrianwilczynski",
+	"icon": "logo.png",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Snippets"
+	],
+	"keywords": [
+		"C#",
+		"CSharp",
+		"namespace",
+		"autocompletion",
+		"autocomplete",
+		"intellisense",
+		".NET",
+		".NET Core"
+	],
+	"activationEvents": [
+		"onLanguage:csharp"
+	],
+	"main": "./out/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"tslint": "^5.12.1",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	}
+}
