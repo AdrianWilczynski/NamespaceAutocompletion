@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const namespacePart = namespace.split('.')[0];
 
-			if (new RegExp(`namespace[ ]+${namespacePart}`).test(linePrefix)) {
+			if (new RegExp(`namespace[ ]+${namespacePart}.`).test(linePrefix)) {
 				return undefined;
 			}
 
