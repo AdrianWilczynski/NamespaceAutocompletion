@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             const namespace = projectRootRelativePath
                 .replace(/[\/\\]/g, '.')
-                .replace(/[ -]/g, '_')
+                .replace(/[^\w.]/g, '_')
                 .replace(/[.]{2,}/g, '.')
                 .replace(/^[.]+/, '')
                 .replace(/[.]+$/, '')
