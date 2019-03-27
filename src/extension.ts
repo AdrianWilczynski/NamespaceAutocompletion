@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return undefined;
             }
 
-            const projectRootRelativePath = path.relative(path.join(searchDir), fileDir);
+            const projectRootRelativePath = path.relative(searchDir, fileDir);
             const csprojBaseName = path.basename(csproj as string, path.extname(csproj as string));
 
             const namespace = path.join(csprojBaseName, projectRootRelativePath)
