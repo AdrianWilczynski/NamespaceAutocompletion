@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
                 hasParentDir = searchDir !== root;
 
                 if (found) {
-                    csproj = fs.readdirSync(searchDir).filter(f => f.endsWith('.csproj'))[0];
+                    csproj = fs.readdirSync(searchDir).find(f => f.endsWith('.csproj'));
                 } else if (hasParentDir) {
                     searchDir = path.join(searchDir, '..');
                 }
