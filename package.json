@@ -1,9 +1,13 @@
 {
 	"name": "namespace",
 	"displayName": "C# Namespace Autocompletion",
-	"description": "...",
+	"description": "Full namespace autocompletion for C#",
 	"publisher": "adrianwilczynski",
-	"icon": "logo.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/AdrianWilczynski/NamespaceAutocompletion.git"
+	},
+	"icon": "img/logo.png",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.32.0"
