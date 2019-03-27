@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
-    let namespaceCompletionProvider = vscode.languages.registerCompletionItemProvider({ scheme: 'file', language: 'csharp' }, {
+    const namespaceCompletionProvider = vscode.languages.registerCompletionItemProvider({ scheme: 'file', language: 'csharp' }, {
         provideCompletionItems(document, position, token, context) {
             if (document.fileName.endsWith('.csx')) {
                 return undefined;
@@ -20,14 +20,18 @@ export function activate(context: vscode.ExtensionContext) {
             const root = path.parse(fileDir).root;
 
             let found = false;
-            let isRoot = fileDir === root;
+            let hasParentDir = true;
 
-            while (!found && !isRoot) {
+            let csproj = null;
+
+            while (!found && hasParentDir) {
                 found = fs.readdirSync(searchDir).some(f => f.endsWith('.csproj'));
+                hasParentDir = searchDir !== root;
 
-                if (!found) {
+                if (found) {
+                    csproj = fs.readdirSync(searchDir).filter(f => f.endsWith('.csproj'))[0];
+                } else if (hasParentDir) {
                     searchDir = path.join(searchDir, '..');
-                    isRoot = searchDir === root;
                 }
             }
 
@@ -35,9 +39,10 @@ export function activate(context: vscode.ExtensionContext) {
                 return undefined;
             }
 
-            const projectRootRelativePath = path.relative(path.join(searchDir, '..'), fileDir);
+            const projectRootRelativePath = path.relative(path.join(searchDir), fileDir);
+            const csprojBaseName = path.basename(csproj as string, path.extname(csproj as string));
 
-            const namespace = projectRootRelativePath
+            const namespace = path.join(csprojBaseName, projectRootRelativePath)
                 .replace(/[\/\\]/g, '.')
                 .replace(/[^\w.]/g, '_')
                 .replace(/[.]{2,}/g, '.')
