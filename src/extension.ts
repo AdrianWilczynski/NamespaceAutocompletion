@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             const linePrefix = document.lineAt(position).text.substr(0, position.character);
-            if (!/namespace[ ]+[\w-]*$/.test(linePrefix)) {
+            if (!/^[ \t]*namespace[ \t]+\w*$/.test(linePrefix)) {
                 return undefined;
             }
 
@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             const namespacePart = namespace.split('.')[0];
 
-            if (new RegExp(`namespace[ ]+${namespacePart}.`).test(linePrefix)) {
+            if (new RegExp(`^[ \t]*namespace[ \t]+${namespacePart}.`).test(linePrefix)) {
                 return undefined;
             }
 
