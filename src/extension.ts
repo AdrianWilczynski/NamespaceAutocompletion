@@ -59,15 +59,16 @@ function findCsprojFile(fileDir: string) {
     let hasParentDir = true;
 
     let csprojFileName: string | undefined;
+    const csprojExt = '.csproj';
 
     while (!found && hasParentDir) {
         const files = fs.readdirSync(searchDir);
 
-        found = files.some(f => f.endsWith('.csproj'));
+        found = files.some(f => f.endsWith(csprojExt));
         hasParentDir = searchDir !== root;
 
         if (found) {
-            csprojFileName = files.find(f => f.endsWith('.csproj'));
+            csprojFileName = files.find(f => f.endsWith(csprojExt));
         } else if (hasParentDir) {
             searchDir = path.join(searchDir, '..');
         }
