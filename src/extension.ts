@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             const csprojInfo = findCsprojFile(fileDir);
             if (!csprojInfo) {
-                return undefined;
+                return;
             }
 
             let rootNamespace = await getRootNamespaceFromElement(csprojInfo.fullPath);
