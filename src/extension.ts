@@ -22,17 +22,17 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            let rootNamespace = await getRootNamespaceFromElement(csprojInfo.fullPath);
+            let rootNamespace = await readRootNamespaceFromElement(csprojInfo.fullPath);
 
             if (!rootNamespace) {
-                rootNamespace = getRootNamespaceFromFileName(csprojInfo.fileName);
+                rootNamespace = readRootNamespaceFromFileName(csprojInfo.fileName);
             }
 
             const projectRootRelativePath = path.relative(csprojInfo.dir, fileDir);
 
-            const namespace = getNamespace(rootNamespace, projectRootRelativePath);
+            const namespace = resolveNamespace(rootNamespace, projectRootRelativePath);
 
-            return getCompletions(namespace);
+            return createCompletions(namespace);
         }
     });
 
@@ -55,33 +55,26 @@ function findCsprojFile(fileDir: string) {
     let searchDir = fileDir;
     const root = path.parse(fileDir).root;
 
-    let found = false;
-    let hasParentDir = true;
+    let fileName: string | undefined;
 
-    let csprojFileName: string | undefined;
-    const csprojExt = '.csproj';
-
-    while (!found && hasParentDir) {
-        const files = fs.readdirSync(searchDir);
-
-        found = files.some(f => f.endsWith(csprojExt));
-        hasParentDir = searchDir !== root;
-
-        if (found) {
-            csprojFileName = files.find(f => f.endsWith(csprojExt));
-        } else if (hasParentDir) {
+    while (true) {
+        fileName = fs.readdirSync(searchDir).find(f => /.\.csproj$/.test(f));
+        
+        if (!fileName && searchDir !== root) {
             searchDir = path.join(searchDir, '..');
+        } else {
+            break;
         }
     }
 
-    if (!found || !csprojFileName) {
+    if (!fileName) {
         return;
     }
 
-    return { fileName: csprojFileName, dir: searchDir, fullPath: path.join(searchDir, csprojFileName) };
+    return { fileName: fileName, dir: searchDir, fullPath: path.join(searchDir, fileName) };
 }
 
-async function getRootNamespaceFromElement(csprojPath: string) {
+async function readRootNamespaceFromElement(csprojPath: string) {
     const csproj = await vscode.workspace.openTextDocument(csprojPath);
     const matches = csproj.getText().match(/<RootNamespace>([\w.]+)<\/RootNamespace>/);
 
@@ -92,11 +85,11 @@ async function getRootNamespaceFromElement(csprojPath: string) {
     return matches[1];
 }
 
-function getRootNamespaceFromFileName(csprojFileName: string) {
+function readRootNamespaceFromFileName(csprojFileName: string) {
     return path.basename(csprojFileName, path.extname(csprojFileName));
 }
 
-function getNamespace(rootNamespace: string, projectRootRelativePath: string) {
+function resolveNamespace(rootNamespace: string, projectRootRelativePath: string) {
     return path.join(rootNamespace, projectRootRelativePath)
         .replace(/[\/\\]/g, '.')
         .replace(/[^\w.]/g, '_')
@@ -108,7 +101,7 @@ function getNamespace(rootNamespace: string, projectRootRelativePath: string) {
         .join('.');
 }
 
-function getCompletions(namespace: string) {
+function createCompletions(namespace: string) {
     const moduleCompletion = new vscode.CompletionItem(namespace, vscode.CompletionItemKind.Module);
 
     const snippetCompletion = new vscode.CompletionItem('namespace-fill', vscode.CompletionItemKind.Snippet);
