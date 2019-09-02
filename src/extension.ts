@@ -57,14 +57,14 @@ function findCsprojFile(fileDir: string) {
 
     let fileName: string | undefined;
 
-    while (true) {
+    for (let i = 0; i < 25; i++) {
         fileName = fs.readdirSync(searchDir).find(f => /.\.csproj$/.test(f));
         
         if (!fileName && searchDir !== root) {
             searchDir = path.join(searchDir, '..');
         } else {
             break;
-        }
+        }  
     }
 
     if (!fileName) {
